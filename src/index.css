@@ -1,0 +1,295 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Uncial+Antiqua&family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --font-display: 'Cinzel', serif;
+  --font-legend: 'Uncial Antiqua', cursive;
+  --font-body: 'EB Garamond', serif;
+
+  --color-ink: #17120c;
+  --color-night: #221a12;
+  --color-parchment: #f0e6cf;
+  --color-parchment-dark: #d9c9a3;
+  --color-gold: #c9a227;
+  --color-gold-bright: #e8c766;
+  --color-ember: #b04a2f;
+  --color-mystic: #5a4a8a;
+  --color-forest: #3d5a3c;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Compensa o header fixo ao navegar para seções por hash */
+section[id] {
+  scroll-margin-top: 5.5rem;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-ink);
+  color: var(--color-parchment);
+}
+
+/* Remove as setas nativas dos inputs numéricos (usamos steppers próprios) */
+input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Textura sutil de pergaminho para seções claras */
+.parchment-bg {
+  background-color: var(--color-parchment);
+  background-image:
+    radial-gradient(ellipse at top, rgba(255, 252, 240, 0.9), transparent 60%),
+    radial-gradient(ellipse at bottom right, rgba(180, 150, 100, 0.25), transparent 55%);
+  color: var(--color-ink);
+}
+
+/* Fogo de estalagem: brilho quente pulsante */
+.ember-glow {
+  animation: ember-glow 3s ease-in-out infinite alternate;
+}
+
+/* Bandeja de resultado das rolagens, fixada na base da tela */
+.bandeja-dados {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 90;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(23, 18, 12, 0.98), rgba(34, 26, 18, 0.88));
+  border-top: 2px solid rgba(201, 162, 39, 0.55);
+  box-shadow: 0 -12px 32px rgba(0, 0, 0, 0.6);
+  animation: bandeja-entrar 0.3s ease-out;
+}
+
+.bandeja-saindo {
+  animation: bandeja-sair 0.4s ease-in forwards;
+}
+
+@keyframes bandeja-entrar {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes bandeja-sair {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(110%);
+  }
+}
+
+/* Dado caindo na bandeja (pulo suave ao pousar) */
+.dado-caindo {
+  animation-name: dado-caindo;
+  animation-timing-function: cubic-bezier(0.3, 0.7, 0.4, 1);
+  animation-fill-mode: backwards;
+}
+
+@keyframes dado-caindo {
+  0% {
+    transform: translateY(-110vh) rotate(-180deg);
+    opacity: 0.9;
+  }
+  60% {
+    transform: translateY(0) rotate(4deg);
+  }
+  75% {
+    transform: translateY(-3vh) rotate(-6deg);
+  }
+  88% {
+    transform: translateY(0) rotate(2deg);
+  }
+  94% {
+    transform: translateY(-1vh) rotate(-2deg);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+/* Face do dado: pergaminho em relevo, no formato de cada tipo */
+.dado-face {
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 35% 30%, #f7edd4, #d9c9a3 68%, #b89b62);
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 800;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.55));
+}
+
+.dado-critico {
+  background: radial-gradient(circle at 35% 30%, #f8e08a, #e8c766 65%, #c9a227);
+  animation: dado-critico-pulso 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes dado-critico-pulso {
+  from {
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+  }
+  to {
+    filter: drop-shadow(0 0 14px rgba(232, 199, 102, 0.95));
+  }
+}
+
+@keyframes ember-glow {
+  from {
+    text-shadow: 0 0 12px rgba(200, 130, 40, 0.4);
+  }
+  to {
+    text-shadow:
+      0 0 22px rgba(232, 199, 102, 0.8),
+      0 0 42px rgba(176, 74, 47, 0.5);
+  }
+}
+
+/* Impressão / Exportação para PDF */
+@media print {
+  body {
+    background-color: #fff !important;
+    color: #17120c !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Oculta elementos que não fazem sentido no PDF */
+  header,
+  footer,
+  .bandeja-dados,
+  .exportar-pdf,
+  button[onClick*="window.print"],
+  [style*="position: fixed"] {
+    display: none !important;
+  }
+
+  main {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    min-height: auto !important;
+  }
+
+  main > div {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    background: #fff !important;
+    color: #17120c !important;
+    border-color: #c9a227 !important;
+    box-shadow: none !important;
+  }
+
+  /* Força cores de pergaminho e dourado na impressão */
+  .parchment-bg {
+    background-color: #f0e6cf !important;
+    background-image: none !important;
+    color: #17120c !important;
+  }
+
+  .bg-night {
+    background-color: #f0e6cf !important;
+    color: #17120c !important;
+  }
+
+  .bg-ink,
+  .bg-ink\\/60,
+  .bg-ink\\/70,
+  .bg-ink\\/80,
+  .bg-ink\\/90 {
+    background-color: #f0e6cf !important;
+  }
+
+  .text-ink,
+  .text-ink\\/70,
+  .text-ink\\/75,
+  .text-ink\\/80,
+  .text-ink\\/85,
+  .text-ink\\/90 {
+    color: #17120c !important;
+  }
+
+  .text-parchment,
+  .text-parchment\\/60,
+  .text-parchment\\/70,
+  .text-parchment\\/75,
+  .text-parchment\\/80,
+  .text-parchment\\/85,
+  .text-parchment\\/90 {
+    color: #17120c !important;
+  }
+
+  .text-gold-bright,
+  .text-gold,
+  .text-forest,
+  .text-ember,
+  .text-mystic {
+    color: #8a6d1a !important;
+  }
+
+  /* Inputs e selects aparecem com borda preta no PDF */
+  input,
+  select,
+  textarea {
+    background-color: #fff !important;
+    color: #17120c !important;
+    border: 1px solid #17120c !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Remove placeholders na impressão */
+  input::placeholder {
+    color: transparent !important;
+  }
+
+  /* Tamanho da página A4 */
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
+
+  h1, h2, h3 {
+    color: #17120c !important;
+  }
+
+  .text-gold-bright {
+    color: #8a6d1a !important;
+  }
+
+  .font-legend {
+    font-family: 'Uncial Antiqua', cursive !important;
+  }
+
+  .font-display {
+    font-family: 'Cinzel', serif !important;
+  }
+
+  .font-body {
+    font-family: 'EB Garamond', serif !important;
+  }
+}
+
+/* Classe utilitária para forçar ocultação na impressão */
+@media print {
+  .exportar-pdf {
+    display: none !important;
+  }
+}
